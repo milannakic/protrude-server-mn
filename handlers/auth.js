@@ -1,7 +1,43 @@
 const db = require("../models"); //if the index.js inside models is named differently then it would need to be specified here as "../models/fileName"
 const jwt = require("jsonwebtoken");
 
-exports.signin = function () {};
+exports.signin = async function (req, res, next) {
+  try {
+    //find user
+    let user = await db.User.findOne({
+      email: req.body.email,
+    });
+    let { id, username, profileImageUrl } = user;
+    //check if the password is correct
+    let isMatch = await user.comparePassword(req.body.password);
+    if (isMatch) {
+      let token = jwt.sign(
+        {
+          id,
+          username,
+          profileImageUrl,
+        },
+        process.env.SECRET_KEY
+      );
+      return res.status(200).json({
+        id,
+        username,
+        profileImageUrl,
+        token,
+      });
+    } else {
+      return next({
+        status: 400,
+        message: "Invalid Email and/or Password! Please try again.",
+      });
+    }
+  } catch (err) {
+    return next({
+      status: 400,
+      message: "Invalid Email and/or Password! Please try again.",
+    });
+  }
+};
 
 exports.signup = async function (req, res, next) {
   try {
