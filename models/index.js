@@ -1,12 +1,10 @@
-require("dotenv").config();
-
 const mongoose = require("mongoose");
 mongoose.set("debug", true);
 mongoose.Promise = Promise; //needed for ES2017 methods
 
 const uri = process.env.DATABASEURL;
 
-/* const options = {
+const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
@@ -25,9 +23,11 @@ mongoose.connect(uri, options).then(
     var d = Date(Date.now()).toString();
     console.log.call(console, d);
   }
-); */
+);
 
-mongoose.connect(uri, {
+/* mongoose.connect(uri, {
   keepAlive: true,
   useMongoClient: true,
-});
+}); */
+
+module.exports.User = require("./user");
