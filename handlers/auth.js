@@ -1,7 +1,7 @@
 const db = require("../models"); //if the index.js inside models is named differently then it would need to be specified here as "../models/fileName"
 const jwt = require("jsonwebtoken");
 
-exports.signin = async function (req, res, next) {
+exports.login = async function (req, res, next) {
   try {
     //find user
     let user = await db.User.findOne({
@@ -10,6 +10,7 @@ exports.signin = async function (req, res, next) {
     let { id, username, profileImageUrl } = user;
     //check if the password is correct
     let isMatch = await user.comparePassword(req.body.password);
+    //if all ok, signin the user
     if (isMatch) {
       let token = jwt.sign(
         {
