@@ -1,17 +1,22 @@
 const mongoose = require("mongoose");
 const User = require("./user");
 
-const messageSchema = new mongoose.Schema({
-  text: {
-    type: String,
-    required: true,
-    maxLength: 280,
+const messageSchema = new mongoose.Schema(
+  {
+    text: {
+      type: String,
+      required: true,
+      maxLength: 280,
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User", //has to be capital "U" for User, same as what is exported from the user model
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 messageSchema.pre("remove", async function (next) {
   //cannot be arrow function as we need the correct value for "this"
