@@ -6,7 +6,7 @@ const messageSchema = new mongoose.Schema(
     text: {
       type: String,
       required: true,
-      maxLength: 280,
+      maxLength: 160,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -19,15 +19,14 @@ const messageSchema = new mongoose.Schema(
 );
 
 messageSchema.pre("remove", async function (next) {
-  //cannot be arrow function as we need the correct value for "this"
   try {
-    //find a user
+    // find a user
     let user = await User.findById(this.user);
-    //remove the message by id from the user's array/list
+    // remove the id of the message from their messages list
     user.messages.remove(this.id);
-    //save the change
+    // save that user
     await user.save();
-    //return next
+    // return next
     return next();
   } catch (err) {
     return next(err);

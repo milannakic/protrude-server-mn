@@ -1,16 +1,14 @@
-const db = require("../models"); //if the index.js inside models is named differently then it would need to be specified here as "../models/fileName"
+const db = require("../models");
 const jwt = require("jsonwebtoken");
 
 exports.login = async function (req, res, next) {
+  // finding a user
   try {
-    //find user
     let user = await db.User.findOne({
       email: req.body.email,
     });
     let { id, username, profileImageUrl } = user;
-    //check if the password is correct
     let isMatch = await user.comparePassword(req.body.password);
-    //if all ok, signin the user
     if (isMatch) {
       let token = jwt.sign(
         {
@@ -29,23 +27,18 @@ exports.login = async function (req, res, next) {
     } else {
       return next({
         status: 400,
-        message: "Invalid Email and/or Password! Please try again.",
+        message: "Invalid Email/Password.",
       });
     }
   } catch (err) {
-    return next({
-      status: 400,
-      message: "Invalid Email and/or Password! Please try again.",
-    });
+    return next({ status: 400, message: "Invalid Email/Password." });
   }
 };
 
 exports.signup = async function (req, res, next) {
   try {
-    //create a user
     let user = await db.User.create(req.body);
     let { id, username, profileImageUrl } = user;
-    //create a token
     let token = jwt.sign(
       {
         id,
@@ -61,7 +54,6 @@ exports.signup = async function (req, res, next) {
       token,
     });
   } catch (err) {
-    //if validation fails
     if (err.code === 11000) {
       err.message = "Sorry, that username and/or email is taken";
     }

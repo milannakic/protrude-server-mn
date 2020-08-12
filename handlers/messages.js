@@ -1,10 +1,10 @@
-const db = require("../models"); //if the index.js inside models is named differently then it would need to be specified here as "../models/fileName"
+const db = require("../models");
 
 exports.createMessage = async function (req, res, next) {
   try {
     let message = await db.Message.create({
       text: req.body.text,
-      user: req.params.id, // route "/api/users/:id/messages" will be created and id can be get from there
+      user: req.params.id,
     });
     let foundUser = await db.User.findById(req.params.id);
     foundUser.messages.push(message.id);
@@ -19,10 +19,10 @@ exports.createMessage = async function (req, res, next) {
   }
 };
 
-// GET /api/users/:id/messages/:message_id
+// GET - /api/users/:id/messages/:message_id
 exports.getMessage = async function (req, res, next) {
   try {
-    let message = await db.Message.find(req.params.message._id);
+    let message = await db.Message.find(req.params.message_id);
     return res.status(200).json(message);
   } catch (err) {
     return next(err);
@@ -32,8 +32,9 @@ exports.getMessage = async function (req, res, next) {
 // DELETE /api/users/:id/messages/:message_id
 exports.deleteMessage = async function (req, res, next) {
   try {
-    let foundMessage = await db.Message.findById(req.params.message._id);
+    let foundMessage = await db.Message.findById(req.params.message_id);
     await foundMessage.remove();
+
     return res.status(200).json(foundMessage);
   } catch (err) {
     return next(err);
